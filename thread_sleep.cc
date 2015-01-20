@@ -6,7 +6,8 @@
  * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
  ********************************************************************/
 #include <nan.h>
-#include <ctime>
+#include <chrono>
+#include <thread>
 
 using v8::FunctionTemplate;
 using v8::Handle;
@@ -19,14 +20,11 @@ NAN_METHOD(SleepSync) {
   NanScope();
 
   // expect a number as the first argument
-  int milisec = args[0]->Uint32Value();
+  int x = args[0]->Uint32Value();
 
-  struct timespec req;
-  req.tv_sec = milisec / 1000;
-  req.tv_nsec = (milisec % 1000) * 1000000L;
-  nanosleep(&req, (struct timespec *)NULL);
+  std::this_thread::sleep_for(std::chrono::milliseconds(x));
 
-  NanReturnValue(NanNew<Number>(milisec));
+  NanReturnValue(NanNew<Number>(x));
 }
 
 
